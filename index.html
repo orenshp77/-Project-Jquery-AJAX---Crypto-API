@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+  <meta name="description" content="מערכת ניהול מטבעות קריפטו מתקדמת - עקוב אחר 100 המטבעות המובילים, תיק מעקב אישי וגרפים בזמן אמת" />
+  <meta name="keywords" content="crypto, cryptocurrency, bitcoin, ethereum, dashboard, real-time, קריפטו, מטבעות דיגיטליים" />
+  <meta name="author" content="CryptoDash" />
+  <meta name="theme-color" content="#0d6efd" />
+
+  <!-- Open Graph / Facebook -->
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="CryptoDash - מערכת ניהול מטבעות קריפטו" />
+  <meta property="og:description" content="עקוב אחר מטבעות הקריפטו המובילים בזמן אמת" />
+
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="CryptoDash - מערכת ניהול מטבעות קריפטו" />
+
+  <title>CryptoDash – מעקב מטבעות דיגיטליים בזמן אמת</title>
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='0.9em' font-size='90'>₿</text></svg>" />
+
+  <!-- Heebo Font -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.rtl.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+  <link href="./css/style.css" rel="stylesheet">
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  <script src="https://cdn.canvasjs.com/canvasjs.min.js"></script>
+</head>
+<body>
+  <nav class="navbar navbar-expand-lg bg-body-tertiary shadow-sm">
+    <div class="container">
+      <a class="navbar-brand fw-bold" href="#">Coin<span class="text-primary">Geek</span></a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#nav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="nav">
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+          <li class="nav-item"><a class="nav-link active" href="#coins">מטבעות</a></li>
+          <li class="nav-item"><a class="nav-link" href="#favorites">תיק מעקב</a></li>
+          <li class="nav-item"><a class="nav-link" href="#live">גרף בזמן אמת</a></li>
+        </ul>
+        
+      </div>
+    </div>
+  </nav>
+
+  <header class="hero text-center">
+    <div class="container py-5">
+      <h1 class="display-5 mb-3">Coin Geek</h1>
+      <p class="lead mb-0">רשימת נכסים, כרטיסי מידע, תיק מעקב וגרף חי.</p>
+    </div>
+  </header>
+
+  <div class="sticky-search py-3 bg-white">
+    <div class="container">
+      <div class="row g-2 align-items-center">
+        <div class="col-12 col-md-6">
+          <label for="search" class="form-label mb-1">חיפוש לפי שם / סמל / מזהה</label>
+          <div class="input-group">
+            <input id="search" class="form-control" type="search" placeholder="bitcoin / eth / dogecoin" />
+            <button id="btnSearch" class="btn btn-primary"><i class="bi bi-search"></i> חפש</button>
+          </div>
+          <div class="form-text">החיפוש מתבצע בצד לקוח בלבד.</div>
+        </div>
+        <div class="col-12 col-md-6 d-flex gap-2 justify-content-md-end mt-3 mt-md-0">
+          <span class="badge text-bg-secondary">נטענו: <span id="countLoaded">0</span></span>
+          <span class="badge text-bg-info">בתיק: <span id="countFavs">0</span>/5</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <main class="container my-4" id="coins">
+    <h2 class="h4 mb-3">נכסים מובילים (עד 100)</h2>
+    <div id="coinsGrid" class="row g-3"></div>
+    <div id="coinsLoader" class="text-center py-4 d-none">
+      <div class="progress w-50 mx-auto"><div class="progress-bar progress-bar-striped progress-bar-animated" style="width:100%">טוען…</div></div>
+    </div>
+  </main>
+
+  <section class="bg-light py-4" id="favorites">
+    <div class="container">
+      <div class="d-flex align-items-center justify-content-between mb-2">
+        <h3 class="h5 mb-0">תיק מעקב (עד 5)</h3>
+        <button id="btnClearFavs" class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i> נקה</button>
+      </div>
+      <div id="favRow" class="row g-3"></div>
+      <div class="text-muted small mt-2">הוסף/הסר דרך הכפתור <span class="badge text-bg-warning">Toggle</span> בכרטיס.</div>
+    </div>
+  </section>
+
+  <section class="container my-4" id="live">
+    <div class="d-flex align-items-center justify-content-between mb-3">
+      <h3 class="h5 mb-0">גרף בזמן אמת (USD) – ריענון כל 30 שניות</h3>
+      <span class="badge bg-secondary" id="chartStatus">
+        <i class="bi bi-clock-history"></i> ממתין לנתונים
+      </span>
+    </div>
+    <div id="chartEmptyMessage" class="alert alert-info" style="display: none;">
+      <i class="bi bi-info-circle"></i>
+      <strong>הוסף מטבעות לתיק המעקב</strong> כדי לראות את הגרף בזמן אמת.
+      לחץ על כפתור <span class="badge text-bg-warning">Toggle</span> בכרטיס המטבע.
+    </div>
+    <div id="chartContainer" style="height:360px"></div>
+  </section>
+
+  <div class="modal fade" id="replaceModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog"><div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">תיק מלא</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <p>ניתן לשמור עד 5 מטבעות. בחר איזה להחליף:</p>
+        <div id="replaceList" class="list-group small"></div>
+      </div>
+      <div class="modal-footer"><button class="btn btn-secondary" data-bs-dismiss="modal">ביטול</button></div>
+    </div></div>
+  </div>
+
+  <footer class="border-top py-4 mt-5">
+    <div class="container small text-secondary">
+      <div class="row">
+      
+        <div class="col-md-6 text-md-end mt-2 mt-md-0">
+          
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Scroll to Top Button -->
+  <button id="scrollTopBtn" class="btn btn-primary rounded-circle position-fixed bottom-0 start-0 m-4 shadow"
+          style="width: 50px; height: 50px; display: none; z-index: 1050;"
+          title="חזור למעלה">
+    <i class="bi bi-arrow-up"></i>
+  </button>
+
+  <!-- Accessibility Widget -->
+  <button id="accessibilityBtn" class="btn btn-light rounded-circle position-fixed bottom-0 end-0 m-4 shadow-lg"
+          style="width: 55px; height: 55px; z-index: 1050; border: 2px solid #e9ecef;"
+          title="נגישות"
+          aria-label="פתח תפריט נגישות">
+    <i class="bi bi-universal-access" style="font-size: 1.5rem; color: #667eea;"></i>
+  </button>
+
+  <!-- Accessibility Panel -->
+  <div id="accessibilityPanel" class="position-fixed end-0 bg-white shadow-lg rounded-3"
+       style="bottom: 90px; width: 300px; max-height: 500px; z-index: 1049; display: none; margin-right: 1rem; border: 1px solid #e9ecef;">
+    <div class="p-3 border-bottom d-flex justify-content-between align-items-center" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+      <h5 class="mb-0 text-white fw-bold"><i class="bi bi-universal-access me-2"></i>נגישות</h5>
+      <button id="closeAccessibility" class="btn btn-sm btn-light rounded-circle" style="width: 30px; height: 30px; padding: 0;">
+        <i class="bi bi-x-lg"></i>
+      </button>
+    </div>
+    <div class="p-3" style="overflow-y: auto; max-height: 420px;">
+      <!-- Text Size -->
+      <div class="mb-4">
+        <label class="form-label fw-bold"><i class="bi bi-fonts me-2"></i>גודל טקסט</label>
+        <div class="btn-group w-100" role="group">
+          <button type="button" class="btn btn-outline-secondary btn-sm" data-text-size="small">קטן</button>
+          <button type="button" class="btn btn-outline-secondary btn-sm active" data-text-size="normal">רגיל</button>
+          <button type="button" class="btn btn-outline-secondary btn-sm" data-text-size="large">גדול</button>
+          <button type="button" class="btn btn-outline-secondary btn-sm" data-text-size="xlarge">ענק</button>
+        </div>
+      </div>
+
+      <!-- Contrast -->
+      <div class="mb-4">
+        <label class="form-label fw-bold"><i class="bi bi-circle-half me-2"></i>ניגודיות</label>
+        <div class="btn-group w-100" role="group">
+          <button type="button" class="btn btn-outline-secondary btn-sm active" data-contrast="normal">רגיל</button>
+          <button type="button" class="btn btn-outline-secondary btn-sm" data-contrast="high">גבוה</button>
+          <button type="button" class="btn btn-outline-secondary btn-sm" data-contrast="dark">כהה</button>
+        </div>
+      </div>
+
+      <!-- Line Height -->
+      <div class="mb-4">
+        <label class="form-label fw-bold"><i class="bi bi-text-paragraph me-2"></i>מרווח בין שורות</label>
+        <div class="btn-group w-100" role="group">
+          <button type="button" class="btn btn-outline-secondary btn-sm active" data-line-height="normal">רגיל</button>
+          <button type="button" class="btn btn-outline-secondary btn-sm" data-line-height="medium">בינוני</button>
+          <button type="button" class="btn btn-outline-secondary btn-sm" data-line-height="large">גדול</button>
+        </div>
+      </div>
+
+      <!-- Letter Spacing -->
+      <div class="mb-4">
+        <label class="form-label fw-bold"><i class="bi bi-alphabet me-2"></i>מרווח בין אותיות</label>
+        <div class="btn-group w-100" role="group">
+          <button type="button" class="btn btn-outline-secondary btn-sm active" data-letter-spacing="normal">רגיל</button>
+          <button type="button" class="btn btn-outline-secondary btn-sm" data-letter-spacing="wide">רחב</button>
+        </div>
+      </div>
+
+      <!-- Dyslexia Font -->
+      <div class="mb-4">
+        <div class="form-check form-switch">
+          <input class="form-check-input" type="checkbox" id="dyslexiaFont">
+          <label class="form-check-label fw-bold" for="dyslexiaFont">
+            <i class="bi bi-eye-fill me-2"></i>פונט לדיסלקציה
+          </label>
+        </div>
+      </div>
+
+      <!-- Cursor Size -->
+      <div class="mb-4">
+        <div class="form-check form-switch">
+          <input class="form-check-input" type="checkbox" id="bigCursor">
+          <label class="form-check-label fw-bold" for="bigCursor">
+            <i class="bi bi-cursor-fill me-2"></i>סמן גדול
+          </label>
+        </div>
+      </div>
+
+      <!-- Reading Guide -->
+      <div class="mb-4">
+        <div class="form-check form-switch">
+          <input class="form-check-input" type="checkbox" id="readingGuide">
+          <label class="form-check-label fw-bold" for="readingGuide">
+            <i class="bi bi-book me-2"></i>מדריך קריאה
+          </label>
+        </div>
+      </div>
+
+      <!-- Reset Button -->
+      <button id="resetAccessibility" class="btn btn-outline-danger w-100">
+        <i class="bi bi-arrow-counterclockwise me-2"></i>איפוס הגדרות
+      </button>
+    </div>
+  </div>
+
+  <!-- Reading Guide Line -->
+  <div id="readingGuideLine" style="display: none; position: fixed; left: 0; right: 0; height: 2px; background: #667eea; z-index: 10000; pointer-events: none; box-shadow: 0 0 10px rgba(102, 126, 234, 0.5);"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="./js/app.js"></script>
+  <script src="./js/accessibility.js"></script>
+</body>
+</html>
